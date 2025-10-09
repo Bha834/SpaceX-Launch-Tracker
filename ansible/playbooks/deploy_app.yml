@@ -1,0 +1,18 @@
+- hosts: app
+  become: yes
+  tasks:
+    - name: create app dir
+      file:
+        path: /opt/spacex
+        state: directory
+        owner: ubuntu
+    - name: copy app files
+      synchronize:
+        src: ../../app/
+        dest: /opt/spacex/
+        rsync_opts:
+          - "--exclude=.git"
+    - name: run docker-compose up
+      command: docker-compose up -d
+      args:
+        chdir: /opt/spacex
